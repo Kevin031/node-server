@@ -11,34 +11,48 @@ class InitManager {
 
   static initCore(app: Koa) {
     InitManager.app = app;
-    InitManager.initLoadRouters();
+    return InitManager.initLoadRouters();
   }
 
   static initLoadRouters() {
-    Promise.all([
-      ...glob.sync(path.resolve(__dirname, `./api/**/*.{js,ts}`)).map((item) =>
-        import(item).then((obj) => {
-          if (obj.default instanceof Router) {
-            InitManager.app.use(obj.default.routes());
-          } else {
-            let Prototype = obj.default.prototype;
-            Object.getOwnPropertyNames(Prototype).forEach((key) => {
-              if (key === "constructor") return;
-              let method = Prototype[key];
-              let pathMatch = item.match(/(\/api\/.+?)\.(js|ts)/);
-              let basePath = pathMatch ? pathMatch[1] : "";
-              if (method.router) {
-                const { url, type } = method.router;
-                router[type as MethodType](basePath + url, method);
-                console.log(`注册路由:[${type}]${basePath}${url}`);
+    return new Promise((resolve, reject) => {
+      let routerMap: Array<{
+        type: string;
+        url: string;
+      }> = [];
+      Promise.all([
+        ...glob
+          .sync(path.resolve(__dirname, `./api/**/*.{js,ts}`))
+          .map((item) =>
+            import(item).then((obj) => {
+              if (obj.default instanceof Router) {
+                InitManager.app.use(obj.default.routes());
+              } else {
+                let Prototype = obj.default.prototype;
+                Object.getOwnPropertyNames(Prototype).forEach((key) => {
+                  if (key === "constructor") return;
+                  let method = Prototype[key];
+                  let pathMatch = item.match(/(\/api\/.+?)\.(js|ts)/);
+                  let basePath = pathMatch ? pathMatch[1] : "";
+                  if (method.router) {
+                    const { url, type } = method.router;
+                    let fullPath = basePath + url;
+                    router[type as MethodType](fullPath, method);
+                    routerMap.push({
+                      url: fullPath,
+                      type,
+                    });
+                    console.log(`注册路由:[${type}]${fullPath}`);
+                  }
+                });
               }
-            });
-          }
-          return Promise.resolve();
-        })
-      ),
-    ]).then(() => {
-      InitManager.app.use(router.routes());
+              return Promise.resolve();
+            })
+          ),
+      ]).then(() => {
+        InitManager.app.use(router.routes());
+        resolve(routerMap);
+      });
     });
   }
 }
