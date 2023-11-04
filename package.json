@@ -7,9 +7,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsnd --respawn src/index.ts",
     "build": "run-s clearBuild compile copyPublic",
-    "compile": "tsc",
+    "compile": "tsc && tsc-alias",
     "clearBuild": "rimraf dist/*",
-    "copyPublic": "copyfiles -u 1 src/public/* dist"
+    "copyPublic": "copyfiles -u 1 src/public/* dist",
+    "start": "pm2 start ./dist/index.js"
   },
   "author": "",
   "license": "ISC",
@@ -19,7 +20,8 @@
     "koa-cors": "^0.0.16",
     "koa-router": "^12.0.1",
     "module-alias": "^2.2.3",
-    "pm2": "^5.3.0"
+    "pm2": "^5.3.0",
+    "tsc-alias": "^1.8.8"
   },
   "devDependencies": {
     "@types/glob": "^8.1.0",
