@@ -1,6 +1,7 @@
 FROM node:18-alpine as build-stage
 WORKDIR /app
 COPY package*.json /app
+RUN npm install -g pm2
 RUN npm install
 COPY . /app
 RUN npm run build
