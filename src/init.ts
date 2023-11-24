@@ -37,7 +37,10 @@ class InitManager {
                   if (method.router) {
                     const { url, type } = method.router;
                     let fullPath = basePath + url;
-                    router[type as MethodType](fullPath, method);
+                    router[type as MethodType](
+                      fullPath,
+                      method.bind(obj.default)
+                    );
                     routerMap.push({
                       url: fullPath,
                       type,

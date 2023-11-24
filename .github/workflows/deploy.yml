@@ -41,4 +41,4 @@ jobs:
             docker ps -a
             docker rm -f node-server-container
             docker pull kevin031/node-server
-            docker run --name node-server-container -p 20238:3000 -v /opt/config/node-server:/app/config -d kevin031/node-server
+            docker run --name node-server-container -p 20238:3000 -v /opt/config/node-server:/dist/public -d kevin031/node-server

@@ -17,10 +17,7 @@ InitManager.initCore(app).then((list) => {
 app.use((ctx, next) => {
   // 请求根目录直接返回可用的接口列表
   if (ctx.request.path === "/") {
-    ctx.body = {
-      ok: 1,
-      data: routerMap,
-    };
+    ctx.body = routerMap;
     return;
   }
   next();
