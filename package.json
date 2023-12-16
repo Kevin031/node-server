@@ -1,37 +1,65 @@
 {
   "name": "koa-server",
   "version": "1.0.0",
-  "description": "",
+  "description": "a private koa server",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "cross-env JEST=true jest",
+    "test:watch": "cross-env JEST=true jest --watchAll",
     "dev": "tsnd --respawn src/index.ts",
     "build": "run-s clearBuild compile copyPublic",
     "compile": "tsc && tsc-alias",
     "clearBuild": "rimraf dist/*",
     "copyPublic": "copyfiles -u 1 src/public/* dist",
-    "start": "pm2 start ./dist/index.js"
+    "start": "pm2 start ./dist/index.js",
+    "postinstall": "simple-git-hooks",
+    "check": "tsc --incremental --noEmit"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm lint-staged && pnpm check"
+  },
+  "lint-staged": {
+    "*.{js,json}": [
+      "prettier --write"
+    ],
+    "*.ts?(x)": [
+      "prettier --parser=typescript --write"
+    ]
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "copyfiles": "^2.4.1",
     "crypto": "^1.0.1",
+    "jsonwebtoken": "^9.0.2",
     "koa": "^2.14.2",
+    "koa-bodyparser": "^4.4.1",
     "koa-cors": "^0.0.16",
     "koa-router": "^12.0.1",
     "module-alias": "^2.2.3",
     "pm2": "^5.3.0",
-    "tsc-alias": "^1.8.8"
+    "prettier": "^3.1.1",
+    "tsc-alias": "^1.8.8",
+    "ws": "^8.14.2"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-decorators": "^7.23.6",
+    "@babel/preset-env": "^7.23.6",
+    "@babel/preset-typescript": "^7.23.3",
     "@types/glob": "^8.1.0",
+    "@types/jest": "^29.5.11",
     "@types/koa": "^2.13.10",
     "@types/koa-cors": "^0.0.4",
     "@types/koa-router": "^7.4.6",
     "@types/node": "^20.8.10",
     "@types/require-directory": "^2.1.4",
+    "babel-plugin-module-resolver": "^5.0.0",
+    "cross-env": "^7.0.3",
+    "jest": "^29.7.0",
+    "lint-staged": "^15.2.0",
     "npm-run-all": "^4.1.5",
+    "simple-git-hooks": "^2.9.0",
+    "supertest": "^6.3.3",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.2.2"
   },

@@ -1,3 +1,6 @@
 node_modules/
 dist/
 src/public/cos-secret.json
+src/public/user-map.json
+src/public/config.json
+mock/
